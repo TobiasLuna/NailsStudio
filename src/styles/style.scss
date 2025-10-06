@@ -1,0 +1,538 @@
+// Variables
+$color-navbar: #212121;
+$color-btn: #ec407a;
+$font-p: "Poppins", sans-serif;
+$neon: 0 0 5px #ec407a, 0 0 15px #ec407a, 0 0 30px #ec407a, 0 0 50px #ec407a;
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: $color-navbar;
+}
+
+section {
+    padding: 2rem 0; // Espaciado interno
+    margin-bottom: 4rem; // Separación entre secciones
+    overflow: hidden; // Evitar cualquier desbordamiento
+
+    .item {
+        padding: 1rem;
+
+        @media (max-width: 600px) {
+            padding: 8px;
+        }
+
+        @media (max-width: 400px) {
+            padding: 6px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+}
+
+.navbar {
+    background: $color-navbar;
+
+    a,
+    h5 {
+        color: #fff;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #fff;
+        text-shadow: $neon;
+    }
+
+    .navbar-toggler {
+        border: none;
+        font-size: 1.25rem;
+    }
+
+    nav {
+        background-color: $color-navbar;
+    }
+}
+
+.container {
+    padding-top: 4rem;
+}
+
+.home {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: $color-navbar;
+    padding: 2rem;
+
+    .inicio {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        .text {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 2rem;
+
+            h4 {
+                font-family: "Playfair Display", serif;
+                font-size: 2rem;
+                color: #ffffffc9;
+                text-shadow: $neon;
+            }
+
+            p {
+                color: #fff;
+                font-family: $font-p;
+            }
+
+            .btn-contacto {
+                border: 1px solid $color-btn;
+                border-radius: 5%;
+                background: none;
+                color: $color-btn;
+                font-size: 1rem;
+                font-family: $font-p;
+                margin-top: 1rem;
+                padding: 0.5rem 1rem;
+
+                &:hover {
+                    box-shadow: 0 0 15px #ec407a;
+                    text-shadow: 0 0 15px #ec407a;
+                }
+            }
+        }
+
+        .imagen {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto;
+
+            img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+
+        .inicio {
+            text-align: center;
+
+            .text,
+            .imagen {
+                margin: 0 auto;
+                width: 90%;
+            }
+
+            .imagen img {
+                max-width: 100%;
+            }
+        }
+    }
+
+    @media (max-width: 576px) {
+        .inicio {
+            .text {
+                h4 {
+                    margin-top: 20px;
+                    font-size: 1.5rem;
+                }
+            }
+
+            .imagen {
+                display: none;
+            }
+        }
+    }
+}
+
+.curso {
+    h2 {
+        text-align: center;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    p {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        color: #fff;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .tarjetas {
+        display: flex;
+        flex-wrap: wrap;
+        /* Permitir que las tarjetas se ajusten automáticamente */
+        justify-content: center;
+        align-items: stretch;
+        gap: 20px;
+        /* Espaciado consistente entre tarjetas */
+
+        .card {
+            background: none;
+            flex: 1 1 calc(33.333% - 20px);
+            /* 3 tarjetas por fila en pantallas grandes */
+            min-width: 280px;
+            /* Tamaño mínimo para tarjetas */
+            max-width: 320px;
+            /* Tamaño máximo para tarjetas */
+            border: 1px solid #fff;
+            box-shadow: 0 0 5px #ec407a;
+            padding: 1rem;
+            min-height: 250px;
+            /* Evitar que las tarjetas sean demasiado pequeñas */
+        }
+
+        div {
+            text-align: center;
+
+            h5 {
+                color: #fff;
+                text-shadow: 0 0 5px #ec407a, 0 0 15px #ec407a, 0 0 30px #ec407a, 0 0 50px #ec407a;
+                text-transform: uppercase;
+            }
+
+            p {
+                color: #fff;
+            }
+
+        }
+
+        img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            /* Mantener proporción */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .tarjetas {
+            flex-direction: column;
+            /* Tarjetas en una sola columna */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tarjetas .card {
+            flex: 1 1 100%;
+            /* Tarjetas toman el 100% del ancho */
+        }
+
+        .tarjetas img {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+}
+
+.sect {
+    .tarjetas {
+        display: flex;
+        flex-wrap: wrap;
+        /* Permitir que las tarjetas se ajusten automáticamente */
+        justify-content: center;
+        align-items: stretch;
+        gap: 20px;
+        /* Espaciado consistente entre tarjetas */
+
+        .card {
+            background: none;
+            flex: 1 1 calc(33.333% - 20px);
+            /* 3 tarjetas por fila en pantallas grandes */
+            min-width: 280px;
+            /* Tamaño mínimo para tarjetas */
+            max-width: 320px;
+            /* Tamaño máximo para tarjetas */
+            border: 1px solid #fff;
+            box-shadow: 0 0 5px #ec407a;
+            padding: 1rem;
+
+            min-height: 250px;
+            /* Evitar que las tarjetas sean demasiado pequeñas */
+        }
+
+        div {
+            text-align: center;
+
+            h5 {
+                color: #fff;
+                text-shadow: $neon;
+                text-transform: uppercase;
+            }
+
+            p {
+                color: #fff;
+            }
+        }
+
+        i {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+            object-fit: cover;
+            /* Mantener proporción */
+            color: #ec407a;
+        }
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            /* Tarjetas en una sola columna */
+            justify-content: center;
+            align-items: center;
+
+            .card {
+                flex: 1 1 100%;
+                /* Tarjetas toman el 100% del ancho */
+            }
+
+            i {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    }
+}
+
+.art {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #eceff1;
+    padding: 2rem;
+
+    h4 {
+        font-family: "Playfair Display", serif;
+        font-size: 30px;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+    }
+
+    h5 {
+        font-family: $font-p;
+        font-size: 25px;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        h4 {
+            font-size: 25px;
+        }
+
+        h5 {
+            font-size: 20px;
+        }
+    }
+}
+
+.contacto {
+    padding: 2rem 0;
+
+    .modificar {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: column;
+
+        color: white;
+        margin-bottom: 10px;
+
+        .botones {
+            margin-top: 1rem;
+            border: 1px solid $color-btn;
+            text-transform: uppercase;
+            border-radius: 5%;
+            background: none;
+            color: $color-btn;
+            font-size: 1rem;
+            font-family: $font-p;
+
+            &:hover {
+                box-shadow: 0 0 15px #ec407a;
+                text-shadow: 0 0 15px #ec407a;
+            }
+        }
+
+        a {
+            border: 1px solid #ec407a;
+        }
+    }
+
+    h4 {
+        font-family: "Playfair Display", serif;
+        text-transform: uppercase;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .contenedor {
+        background: none;
+        border: 1px solid #fff;
+        box-shadow: 0 0 15px #ec407a;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+        .contenedor {
+            max-width: 300px;
+        }
+    }
+}
+
+.modificar-titulo {
+
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+
+}
+
+.formulario {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1rem;
+
+
+    a {
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #fff;
+        margin-left: 5px;
+
+        border: 1px solid #fff;
+        padding: 5px;
+    }
+
+    .form-grup {
+        margin-bottom: 10px;
+    }
+
+    select {
+        width: 100%;
+    }
+
+    .radio {
+        display: flex;
+        flex-direction: column;
+        color: #fff;
+    }
+
+    .btn-contacto {
+        margin-top: 1rem;
+        border: 1px solid $color-btn;
+        text-transform: uppercase;
+        border-radius: 5%;
+        background: none;
+        color: $color-btn;
+        font-size: 1rem;
+        font-family: $font-p;
+
+        &:hover {
+            box-shadow: 0 0 15px #ec407a;
+            text-shadow: 0 0 15px #ec407a;
+        }
+    }
+}
+
+/* Ajustes generales */
+@media (max-width: 768px) {
+    section {
+        margin-bottom: 3rem;
+    }
+}
+
+.Agendados {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ec407a 0%, #212121 100%);
+  padding: 3rem 0;
+
+  .contenedor {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(44, 44, 44, 0.37);
+    border-radius: 24px;
+    padding: 2rem 2.5rem;
+    max-width: 700px;
+    width: 100%;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(236, 64, 122, 0.2);
+
+    h4 {
+      color: #fff;
+      font-family: "Playfair Display", serif;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px #ec407a;
+    }
+
+    table {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(33, 33, 33, 0.95);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(236, 64, 122, 0.15);
+
+      th, td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #ec407a33;
+      }
+
+      th {
+        background: #ec407a;
+        color: #fff;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:hover {
+        background: #ec407a33;
+        transition: background 0.2s;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .Agendados .contenedor {
+    padding: 1rem;
+    max-width: 98vw;
+  }
+  .Agendados table th, .Agendados table td {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+}
