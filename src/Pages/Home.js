@@ -26,7 +26,7 @@ function Home() {
   const [turnoEncontrado, setTurnoEncontrado] = useState(null);
   const [nuevoTrabajo, setNuevoTrabajo] = useState("");
 
-  // Manejar inputs
+  // Manejo de cambios en el formulario
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -36,9 +36,8 @@ function Home() {
   };
 
   // Validar que la fecha no sea anterior a hoy
-  const ValidarFecha = () => {
+  const validarFecha = () => {
     const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); // ignorar horas
     const fechaSeleccionada = new Date(formData.fecha);
     if (fechaSeleccionada < hoy) {
       alert("La fecha seleccionada no puede ser anterior a hoy.");
@@ -47,7 +46,7 @@ function Home() {
     return true;
   };
 
-  // Validar si ya existe un turno en la misma fecha/hora
+  // Validar disponibilidad del turno
   const validarTurno = async (fecha, hora) => {
     try {
       const turnosRef = collection(db, "turnos");
@@ -57,18 +56,18 @@ function Home() {
         where("hora", "==", hora)
       );
       const querySnapshot = await getDocs(q);
-      return querySnapshot.empty; // true = libre, false = ocupado
+      return querySnapshot.empty; // true = disponible, false = ocupado
     } catch (error) {
       console.error("Error al validar el turno:", error);
       return false;
     }
   };
 
-  // Agendar turno
+  // Guardar un nuevo turno
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!ValidarFecha()) return;
+    if (!validarFecha()) return;
 
     const disponible = await validarTurno(formData.fecha, formData.hora);
     if (!disponible) {
@@ -93,7 +92,7 @@ function Home() {
     }
   };
 
-  // Buscar turno por código
+  // Buscar un turno por ID
   const buscarTurno = async (e) => {
     e.preventDefault();
     try {
@@ -111,7 +110,7 @@ function Home() {
     }
   };
 
-  // Modificar trabajo del turno
+  // Modificar un turno existente
   const modificarTurno = async () => {
     try {
       const docRef = doc(db, "turnos", codigo);
@@ -124,7 +123,7 @@ function Home() {
     }
   };
 
-  // Cancelar turno
+  // Cancelar un turno existente
   const cancelarTurno = async () => {
     try {
       const docRef = doc(db, "turnos", codigo);
@@ -142,9 +141,7 @@ function Home() {
       {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg fixed-top" data-bs-theme="dark">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            LOVERS STUDIO
-          </a>
+          <a className="navbar-brand" href="#">LOVERS STUDIO</a>
           <button
             className="navbar-toggler"
             type="button"
@@ -174,33 +171,140 @@ function Home() {
             </div>
             <div className="offcanvas-body">
               <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                <li className="nav-item">
-                  <a className="nav-link" href="#INICIO">Inicio</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#SERVICIOS">Servicios</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#CURSOS">Cursos</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#PRECIOS">Precios</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#TURNO">Turnos</a>
-                </li>
+                <li className="nav-item"><a className="nav-link" href="#INICIO">Inicio</a></li>
+                <li className="nav-item"><a className="nav-link" href="#SERVICIOS">Servicios</a></li>
+                <li className="nav-item"><a className="nav-link" href="#CURSOS">Cursos</a></li>
+                <li className="nav-item"><a className="nav-link" href="#PRECIOS">Precios</a></li>
+                <li className="nav-item"><a className="nav-link" href="#TURNO">Turnos</a></li>
               </ul>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* SECCIÓN TURNOS */}
+      {/* INICIO */}
+      <section id="INICIO" className="home">
+        <div className="container inicio item">
+          <div className="text">
+            <h4>Manos que inspiran, uñas que brillan</h4>
+            <p>
+              En LOVERS STUDIO, nos especializamos en realzar la belleza de tus manos
+              con diseños únicos y cuidados profesionales. Descubre un mundo de colores,
+              estilos y tendencias que se adaptan a tu personalidad. Porque tus uñas no solo
+              son un detalle, ¡son tu mejor accesorio!
+            </p>
+            <a href="/#TURNO">
+              <button className="btn-contacto">PEDIR TURNO</button>
+            </a>
+          </div>
+          <div className="imagen">
+            <img src="/images/inicio.jpeg" alt="Inicio" />
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICIOS */}
+      <section id="SERVICIOS" className="ser sect">
+        <div className="container tarjetas item">
+          {/* Tarjetas de servicios */}
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><i className="fi fi-ts-finger-nail"></i></div>
+            <div className="card-body">
+              <h5 className="card-title">SOFTGEL</h5>
+              <p className="card-text">Extensiones ligeras y flexibles que lucen naturales y cómodas.</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><i className="fi fi-tr-finger-nail"></i></div>
+            <div className="card-body">
+              <h5 className="card-title">SEMIPERMANENTE</h5>
+              <p className="card-text">Manicura duradera con esmalte en gel que ofrece brillo y resistencia por semanas.</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><i className="fi fi-ts-polish-brush"></i></div>
+            <div className="card-body">
+              <h5 className="card-title">NAILSART</h5>
+              <p className="card-text">Diseños personalizados para uñas que reflejan tu estilo único.</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><i className="fi fi-ts-polish-bottle"></i></div>
+            <div className="card-body">
+              <h5 className="card-title">CAPPING</h5>
+              <p className="card-text">Refuerzo de uñas naturales con gel para mayor protección y fuerza.</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><i className="fi fi-ts-two-nails"></i></div>
+            <div className="card-body">
+              <h5 className="card-title">PRESS-ON</h5>
+              <p className="card-text">Uñas listas para usar con diseños únicos y prácticos.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CURSOS */}
+      <section id="CURSOS" className="container curso">
+        <h2>CURSOS</h2>
+        <p>
+          Los cursos son personalizados, el día y horario es a coordinar, los materiales son aportados.
+          Se pide una seña de $10.000 para poder reservar el curso, cada uno de ellos dura una hora y media
+          para que la alumna esté tranquila al realizar las prácticas y haga todo a su tiempo.
+        </p>
+        <div className="tarjetas">
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><img src="/images/semi.jpeg" alt="Curso Semipermanente" /></div>
+            <div className="card-body">
+              <h5 className="card-title">SEMIPERMANENTE</h5>
+              <p className="card-text">$30.000</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><img src="/images/softgel.jpeg" alt="Curso Softgel" /></div>
+            <div className="card-body">
+              <h5 className="card-title">SOFTGEL</h5>
+              <p className="card-text">$35.000</p>
+            </div>
+          </div>
+
+          <div className="card" style={{ maxWidth: "18rem" }}>
+            <div className="card-header"><img src="/images/nailsart.jpeg" alt="Curso Nails Art" /></div>
+            <div className="card-body">
+              <h5 className="card-title">NAILS ART</h5>
+              <p className="card-text">$45.000</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PRECIOS */}
+      <section id="PRECIOS" className="art">
+        <div className="container item">
+          <h4>PRECIOS</h4>
+          <h5>SOFTGEL LISO..................$</h5>
+          <h5>SOFTGEL + DISEÑO SIMPLE..................$</h5>
+          <h5>SOFTGEL FULL..................$</h5>
+          <h5>SOFTGEL + APLIQUES..................$</h5>
+          <h5>SEMIPERMANENTE..................$</h5>
+          <h5>CAPPING..................$</h5>
+          <h5>PRESS ON..................$</h5>
+          <h5>PRESS ON FULL SET..................$</h5>
+        </div>
+      </section>
+
+      {/* TURNOS */}
       <section id="TURNO" className="contacto">
         <div className="contenedor container">
           <h4>PEDIR TURNO</h4>
           <form className="formulario" onSubmit={handleSubmit}>
-            <div className="form-floating mb-3">
+            <div className="form-grup form-floating mb-3">
               <input
                 type="text"
                 className="form-control"
@@ -213,8 +317,7 @@ function Home() {
               />
               <label htmlFor="nombre">Nombre</label>
             </div>
-
-            <div className="form-floating mb-3">
+            <div className="form-grup form-floating mb-3">
               <input
                 type="text"
                 className="form-control"
@@ -227,8 +330,7 @@ function Home() {
               />
               <label htmlFor="usuario">Usuario</label>
             </div>
-
-            <div className="mb-3">
+            <div className="form-grup mb-3">
               <input
                 type="date"
                 className="form-control"
@@ -239,9 +341,8 @@ function Home() {
                 required
               />
             </div>
-
             <select
-              className="form-select mb-3"
+              className="form-grup form-select form-select-sm mb-3"
               name="hora"
               value={formData.hora}
               onChange={handleChange}
@@ -252,9 +353,8 @@ function Home() {
               <option value="12:00">12:00</option>
               <option value="14:00">14:00</option>
             </select>
-
             <select
-              className="form-select mb-3"
+              className="form-grup form-select form-select-sm mb-3"
               name="trabajo"
               value={formData.trabajo}
               onChange={handleChange}
@@ -266,41 +366,45 @@ function Home() {
               <option value="CAPPING">CAPPING</option>
               <option value="PRESS-ON">PRESS-ON</option>
             </select>
-
-            <div className="form-check mb-3">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="retiro"
-                name="retiro"
-                checked={formData.retiro}
-                onChange={handleChange}
-              />
-              <label className="form-check-label" htmlFor="retiro">
-                ¿Necesita retiro?
-              </label>
+            <div className="form-grup radio mb-3">
+              <span>¿Necesita retiro?</span>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="retiro"
+                  name="retiro"
+                  checked={formData.retiro}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label" htmlFor="retiro">
+                  Sí
+                </label>
+              </div>
             </div>
-
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="form-grup btn-contacto">
               Agendar
             </button>
           </form>
 
           {/* Modificar o cancelar turno */}
-          <form onSubmit={buscarTurno} className="mt-5">
-            <p>¿Requiere modificar o cancelar?</p>
-            <div className="input-group mb-3">
-              <span className="input-group-text">#</span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Ingrese su código"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                required
-              />
+          <form onSubmit={buscarTurno}>
+            <div className="modificar mt-5">
+              <p>¿Requiere modificar o cancelar?</p>
+              <span>Ingrese su código</span>
+              <div className="input-group flex-nowrap mb-3">
+                <span className="input-group-text" id="addon-wrapping">#</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Ingrese su código"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="botones">Buscar</button>
             </div>
-            <button type="submit" className="btn btn-secondary">Buscar</button>
           </form>
 
           {turnoEncontrado && (
