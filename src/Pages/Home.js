@@ -115,16 +115,16 @@ function Home() {
             </div>
             <div className="form-grup form-floating mb-3">
               <input
-                type="email"
+                type="text"
                 className="form-control"
-                id="correo"
-                name="correo"
-                placeholder="Correo"
-                value={formData.correo}
+                id="usuario"
+                name="usuario"
+                placeholder="Usuario"
+                value={formData.usuario}
                 onChange={handleChange}
                 required
               />
-              <label htmlFor="correo">Correo</label>
+              <label htmlFor="usuario">Usuario</label>
             </div>
             <div className="form-grup mb-3">
               <input
