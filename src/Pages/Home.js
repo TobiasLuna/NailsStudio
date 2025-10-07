@@ -71,13 +71,23 @@ function Home() {
 
     const disponible = await validarTurno(formData.fecha, formData.hora);
     if (!disponible) {
-      alert("Ese turno ya está ocupado, por favor elija otra hora.");
+      Swal.fire({
+        icon: "error",
+        title: "Turno ocupado",
+        text: "Ese horario ya está reservado. Elige otro 😉",
+        confirmButtonColor: "#d33",
+      });
       return;
     }
 
     try {
       const docRef = await addDoc(collection(db, "turnos"), formData);
-      alert(`Turno agendado con éxito. Tu código es: ${docRef.id}`);
+      Swal.fire({
+        icon: "success",
+        title: "¡Turno reservado!",
+        text: `Tu reserva fue registrada con éxito 🎉, Codigo: ${docRef.id}`,
+        confirmButtonColor: "#3085d6",
+      });
       setFormData({
         nombre: "",
         usuario: "",
@@ -88,7 +98,12 @@ function Home() {
       });
     } catch (error) {
       console.error("Error al guardar el turno:", error);
-      alert("Hubo un problema al agendar el turno");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Por favor, intenta nuevamente más tarde.",
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -102,7 +117,12 @@ function Home() {
         setTurnoEncontrado({ id: docSnap.id, ...docSnap.data() });
         setNuevoTrabajo(docSnap.data().trabajo);
       } else {
-        alert("No se encontró ningún turno con ese código");
+        Swal.fire({
+          icon: "error",
+          title: "Modificar",
+          text: "No se encontró ningún turno con ese código.",
+          confirmButtonColor: "#d33",
+        });
         setTurnoEncontrado(null);
       }
     } catch (error) {
@@ -115,7 +135,12 @@ function Home() {
     try {
       const docRef = doc(db, "turnos", codigo);
       await updateDoc(docRef, { trabajo: nuevoTrabajo });
-      alert("Turno modificado con éxito");
+      Swal.fire({
+        icon: "success",
+        title: "¡Turno Modificado!",
+        text: "Tu turno fue modificado con éxito 🎉",
+        confirmButtonColor: "#3085d6",
+      });
       setTurnoEncontrado(null);
       setCodigo("");
     } catch (error) {
@@ -128,7 +153,12 @@ function Home() {
     try {
       const docRef = doc(db, "turnos", codigo);
       await deleteDoc(docRef);
-      alert("Turno cancelado");
+      Swal.fire({
+        icon: "success",
+        title: "¡Turno Cancelado!",
+        text: "Tu turno fue cancelado con éxito 🎉",
+        confirmButtonColor: "#3085d6",
+      });
       setTurnoEncontrado(null);
       setCodigo("");
     } catch (error) {
