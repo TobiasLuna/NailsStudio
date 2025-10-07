@@ -1,29 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from './firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 function Turnos() {
   const [isLogged, setIsLogged] = useState(false);
   const [loginForm, setLoginForm] = useState({ usuario: '', password: '' });
   const [error, setError] = useState('');
+  const [turnos, setTurnos] = useState([]);
 
-  // Ejemplo de turnos agendados
-  const [turnos] = useState([
-    {
-      nombre: 'Ana',
-      correo: 'ana@email.com',
-      fecha: '2025-10-10',
-      hora: '10:00',
-      trabajo: 'Softgel',
-      retiro: true,
-    },
-    {
-      nombre: 'Luis',
-      correo: 'luis@email.com',
-      fecha: '2025-10-12',
-      hora: '12:00',
-      trabajo: 'Semipermanente',
-      retiro: false,
-    },
-  ]);
+  // Cargar turnos desde Firestore
+  useEffect(() => {
+    const cargarTurnos = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'turnos'));
+        const lista = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTurnos(lista);
+      } catch (error) {
+        console.error('Error al cargar turnos:', error);
+      }
+    };
+
+    if (isLogged) {
+      cargarTurnos();
+    }
+  }, [isLogged]);
 
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +35,6 @@ function Turnos() {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    // Usuario y contraseña fijos para ejemplo
     if (loginForm.usuario === 'Day' && loginForm.password === 'Damaris') {
       setIsLogged(true);
       setError('');
@@ -100,8 +102,8 @@ function Turnos() {
                 <td colSpan="6" style={{ textAlign: 'center' }}>No hay turnos agendados.</td>
               </tr>
             ) : (
-              turnos.map((t, idx) => (
-                <tr key={idx}>
+              turnos.map((t) => (
+                <tr key={t.id}>
                   <td>{t.nombre}</td>
                   <td>{t.correo}</td>
                   <td>{t.fecha}</td>
