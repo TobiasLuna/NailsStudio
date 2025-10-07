@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db } from "./firebaseConfig";
+import { db } from "../firebaseConfig";
 import {
   collection,
   addDoc,
@@ -7,12 +7,15 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 
 function Home() {
   const [formData, setFormData] = useState({
     nombre: "",
-    correo: "",
+    usuario: "",
     fecha: "",
     hora: "",
     trabajo: "",
@@ -23,6 +26,7 @@ function Home() {
   const [turnoEncontrado, setTurnoEncontrado] = useState(null);
   const [nuevoTrabajo, setNuevoTrabajo] = useState("");
 
+  // Manejar inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -31,14 +35,53 @@ function Home() {
     }));
   };
 
+  // Validar que la fecha no sea anterior a hoy
+  const ValidarFecha = () => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // ignorar horas
+    const fechaSeleccionada = new Date(formData.fecha);
+    if (fechaSeleccionada < hoy) {
+      alert("La fecha seleccionada no puede ser anterior a hoy.");
+      return false;
+    }
+    return true;
+  };
+
+  // Validar si ya existe un turno en la misma fecha/hora
+  const validarTurno = async (fecha, hora) => {
+    try {
+      const turnosRef = collection(db, "turnos");
+      const q = query(
+        turnosRef,
+        where("fecha", "==", fecha),
+        where("hora", "==", hora)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.empty; // true = libre, false = ocupado
+    } catch (error) {
+      console.error("Error al validar el turno:", error);
+      return false;
+    }
+  };
+
+  // Agendar turno
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!ValidarFecha()) return;
+
+    const disponible = await validarTurno(formData.fecha, formData.hora);
+    if (!disponible) {
+      alert("Ese turno ya está ocupado, por favor elija otra hora.");
+      return;
+    }
+
     try {
       const docRef = await addDoc(collection(db, "turnos"), formData);
       alert(`Turno agendado con éxito. Tu código es: ${docRef.id}`);
       setFormData({
         nombre: "",
-        correo: "",
+        usuario: "",
         fecha: "",
         hora: "",
         trabajo: "",
@@ -50,6 +93,7 @@ function Home() {
     }
   };
 
+  // Buscar turno por código
   const buscarTurno = async (e) => {
     e.preventDefault();
     try {
@@ -67,6 +111,7 @@ function Home() {
     }
   };
 
+  // Modificar trabajo del turno
   const modificarTurno = async () => {
     try {
       const docRef = doc(db, "turnos", codigo);
@@ -79,6 +124,7 @@ function Home() {
     }
   };
 
+  // Cancelar turno
   const cancelarTurno = async () => {
     try {
       const docRef = doc(db, "turnos", codigo);
@@ -93,14 +139,68 @@ function Home() {
 
   return (
     <div style={{ backgroundColor: "#212121" }}>
-      {/* ...Navbar, INICIO, SERVICIOS, CURSOS, PRECIOS... */}
+      {/* NAVBAR */}
+      <nav className="navbar navbar-expand-lg fixed-top" data-bs-theme="dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">
+            LOVERS STUDIO
+          </a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div
+            className="offcanvas offcanvas-end"
+            tabIndex="-1"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                LOVERS
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item">
+                  <a className="nav-link" href="#INICIO">Inicio</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#SERVICIOS">Servicios</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#CURSOS">Cursos</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#PRECIOS">Precios</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#TURNO">Turnos</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
 
-      {/* Sección TURNO */}
+      {/* SECCIÓN TURNOS */}
       <section id="TURNO" className="contacto">
         <div className="contenedor container">
           <h4>PEDIR TURNO</h4>
           <form className="formulario" onSubmit={handleSubmit}>
-            <div className="form-grup form-floating mb-3">
+            <div className="form-floating mb-3">
               <input
                 type="text"
                 className="form-control"
@@ -113,7 +213,8 @@ function Home() {
               />
               <label htmlFor="nombre">Nombre</label>
             </div>
-            <div className="form-grup form-floating mb-3">
+
+            <div className="form-floating mb-3">
               <input
                 type="text"
                 className="form-control"
@@ -126,7 +227,8 @@ function Home() {
               />
               <label htmlFor="usuario">Usuario</label>
             </div>
-            <div className="form-grup mb-3">
+
+            <div className="mb-3">
               <input
                 type="date"
                 className="form-control"
@@ -137,8 +239,9 @@ function Home() {
                 required
               />
             </div>
+
             <select
-              className="form-grup form-select form-select-sm mb-3"
+              className="form-select mb-3"
               name="hora"
               value={formData.hora}
               onChange={handleChange}
@@ -149,8 +252,9 @@ function Home() {
               <option value="12:00">12:00</option>
               <option value="14:00">14:00</option>
             </select>
+
             <select
-              className="form-grup form-select form-select-sm mb-3"
+              className="form-select mb-3"
               name="trabajo"
               value={formData.trabajo}
               onChange={handleChange}
@@ -162,45 +266,41 @@ function Home() {
               <option value="CAPPING">CAPPING</option>
               <option value="PRESS-ON">PRESS-ON</option>
             </select>
-            <div className="form-grup radio mb-3">
-              <span>¿Necesita retiro?</span>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="retiro"
-                  name="retiro"
-                  checked={formData.retiro}
-                  onChange={handleChange}
-                />
-                <label className="form-check-label" htmlFor="retiro">
-                  Sí
-                </label>
-              </div>
+
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="retiro"
+                name="retiro"
+                checked={formData.retiro}
+                onChange={handleChange}
+              />
+              <label className="form-check-label" htmlFor="retiro">
+                ¿Necesita retiro?
+              </label>
             </div>
-            <button type="submit" className="form-grup btn-contacto">
+
+            <button type="submit" className="btn btn-primary">
               Agendar
             </button>
           </form>
 
           {/* Modificar o cancelar turno */}
-          <form onSubmit={buscarTurno}>
-            <div className="modificar mt-5">
-              <p>¿Requiere modificar o cancelar?</p>
-              <span>Ingrese su código</span>
-              <div className="input-group flex-nowrap mb-3">
-                <span className="input-group-text" id="addon-wrapping">#</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Ingrese su código"
-                  value={codigo}
-                  onChange={(e) => setCodigo(e.target.value)}
-                  required
-                />
-              </div>
-              <button type="submit" className="botones">Buscar</button>
+          <form onSubmit={buscarTurno} className="mt-5">
+            <p>¿Requiere modificar o cancelar?</p>
+            <div className="input-group mb-3">
+              <span className="input-group-text">#</span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Ingrese su código"
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+                required
+              />
             </div>
+            <button type="submit" className="btn btn-secondary">Buscar</button>
           </form>
 
           {turnoEncontrado && (
