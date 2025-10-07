@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { db } from "../firebaseConfig";
+import Swal from "sweetalert2";
 import {
   collection,
   addDoc,
@@ -25,6 +26,8 @@ function Home() {
   const [codigo, setCodigo] = useState("");
   const [turnoEncontrado, setTurnoEncontrado] = useState(null);
   const [nuevoTrabajo, setNuevoTrabajo] = useState("");
+  const [nuevaFecha, setNuevaFecha] = useState("");
+  const [nuevaHora, setNuevaHora] = useState("");
 
   // Manejo de cambios en el formulario
   const handleChange = (e) => {
@@ -36,18 +39,24 @@ function Home() {
   };
 
   // Validar que la fecha no sea anterior a hoy
-  const validarFecha = () => {
+  const validarFecha = (fecha) => {
     const hoy = new Date();
-    const fechaSeleccionada = new Date(formData.fecha);
+    hoy.setHours(0, 0, 0, 0);
+    const fechaSeleccionada = new Date(fecha);
     if (fechaSeleccionada < hoy) {
-      alert("La fecha seleccionada no puede ser anterior a hoy.");
+       Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "La fecha seleccionada no puede ser anterior a hoy.",
+        confirmButtonColor: "#d33",
+      });
       return false;
     }
     return true;
   };
 
   // Validar disponibilidad del turno
-  const validarTurno = async (fecha, hora) => {
+  const validarTurno = async (fecha, hora, idExcluir = null) => {
     try {
       const turnosRef = collection(db, "turnos");
       const q = query(
@@ -56,6 +65,13 @@ function Home() {
         where("hora", "==", hora)
       );
       const querySnapshot = await getDocs(q);
+      
+      // Si estamos modificando, excluimos el turno actual de la validación
+      if (idExcluir) {
+        const turnosOcupados = querySnapshot.docs.filter(doc => doc.id !== idExcluir);
+        return turnosOcupados.length === 0;
+      }
+      
       return querySnapshot.empty; // true = disponible, false = ocupado
     } catch (error) {
       console.error("Error al validar el turno:", error);
@@ -67,7 +83,7 @@ function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validarFecha()) return;
+    if (!validarFecha(formData.fecha)) return;
 
     const disponible = await validarTurno(formData.fecha, formData.hora);
     if (!disponible) {
@@ -114,8 +130,11 @@ function Home() {
       const docRef = doc(db, "turnos", codigo);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setTurnoEncontrado({ id: docSnap.id, ...docSnap.data() });
-        setNuevoTrabajo(docSnap.data().trabajo);
+        const data = docSnap.data();
+        setTurnoEncontrado({ id: docSnap.id, ...data });
+        setNuevoTrabajo(data.trabajo);
+        setNuevaFecha(data.fecha);
+        setNuevaHora(data.hora);
       } else {
         Swal.fire({
           icon: "error",
@@ -132,9 +151,28 @@ function Home() {
 
   // Modificar un turno existente
   const modificarTurno = async () => {
+    // Validar la nueva fecha
+    if (!validarFecha(nuevaFecha)) return;
+
+    // Validar si el nuevo horario está disponible (excluyendo el turno actual)
+    const disponible = await validarTurno(nuevaFecha, nuevaHora, codigo);
+    if (!disponible) {
+      Swal.fire({
+        icon: "error",
+        title: "Turno ocupado",
+        text: "Ese horario ya está reservado. Elige otro 😉",
+        confirmButtonColor: "#d33",
+      });
+      return;
+    }
+
     try {
       const docRef = doc(db, "turnos", codigo);
-      await updateDoc(docRef, { trabajo: nuevoTrabajo });
+      await updateDoc(docRef, { 
+        trabajo: nuevoTrabajo,
+        fecha: nuevaFecha,
+        hora: nuevaHora
+      });
       Swal.fire({
         icon: "success",
         title: "¡Turno Modificado!",
@@ -145,6 +183,12 @@ function Home() {
       setCodigo("");
     } catch (error) {
       console.error("Error al modificar el turno:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo modificar el turno. Intenta nuevamente.",
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -438,21 +482,51 @@ function Home() {
           </form>
 
           {turnoEncontrado && (
-            <div className="mt-3">
+            <div className="mt-3 modificar-turno">
               <h5>Turno encontrado:</h5>
               <p><strong>Nombre:</strong> {turnoEncontrado.nombre}</p>
+              <p><strong>Fecha actual:</strong> {turnoEncontrado.fecha}</p>
+              <p><strong>Hora actual:</strong> {turnoEncontrado.hora}</p>
               <p><strong>Trabajo actual:</strong> {turnoEncontrado.trabajo}</p>
-              <select
-                className="form-select mb-2"
-                value={nuevoTrabajo}
-                onChange={(e) => setNuevoTrabajo(e.target.value)}
-              >
-                <option value="SOFTGEL">SOFTGEL</option>
-                <option value="SEMIPERMANENTE">SEMIPERMANENTE</option>
-                <option value="CAPPING">CAPPING</option>
-                <option value="PRESS-ON">PRESS-ON</option>
-              </select>
-              <button className="btn btn-warning me-2" onClick={modificarTurno}>
+              
+              <div className="mb-3">
+                <label className="form-label">Nueva Fecha:</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={nuevaFecha}
+                  onChange={(e) => setNuevaFecha(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Nueva Hora:</label>
+                <select
+                  className="form-select"
+                  value={nuevaHora}
+                  onChange={(e) => setNuevaHora(e.target.value)}
+                >
+                  <option value="10:00">10:00</option>
+                  <option value="12:00">12:00</option>
+                  <option value="14:00">14:00</option>
+                </select>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Nuevo Trabajo:</label>
+                <select
+                  className="form-select"
+                  value={nuevoTrabajo}
+                  onChange={(e) => setNuevoTrabajo(e.target.value)}
+                >
+                  <option value="SOFTGEL">SOFTGEL</option>
+                  <option value="SEMIPERMANENTE">SEMIPERMANENTE</option>
+                  <option value="CAPPING">CAPPING</option>
+                  <option value="PRESS-ON">PRESS-ON</option>
+                </select>
+              </div>
+
+              <button className="btn btn-contacto me-2" onClick={modificarTurno}>
                 Modificar
               </button>
               <button className="btn btn-danger" onClick={cancelarTurno}>
