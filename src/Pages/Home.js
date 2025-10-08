@@ -101,7 +101,7 @@ function Home() {
       Swal.fire({
         icon: "success",
         title: "¡Turno reservado!",
-        text: `Tu reserva fue registrada con éxito 🎉, Codigo: ${docRef.id}`,
+        text: `Tu reserva fue registrada con éxito 🎉, Codigo: ${docRef.id} (Para modificar o cancelar este turno, ingresa el código en la sección correspondiente)`,
         confirmButtonColor: "#3085d6",
       });
       setFormData({
