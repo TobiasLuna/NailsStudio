@@ -97,7 +97,7 @@ function Turnos() {
         where("hora", "==", hora)
       );
       const querySnapshot = await getDocs(q);
-      
+
       const turnosOcupados = querySnapshot.docs.filter(doc => doc.id !== idExcluir);
       return turnosOcupados.length === 0;
     } catch (error) {
@@ -223,7 +223,7 @@ function Turnos() {
         <p className="card-text text-light mb-3">
           <strong>Retiro:</strong> {turno.retiro ? "Sí" : "No"}
         </p>
-        
+
         {turnoEditando === turno.id ? (
           <div className="border-top pt-3 mt-3">
             <h6 className="text-white mb-3">Editar Turno</h6>
@@ -245,9 +245,13 @@ function Turnos() {
                 value={datosEdicion.hora}
                 onChange={handleEdicionChange}
               >
-                <option value="10:00">10:00</option>
-                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
                 <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
               </select>
             </div>
             <div className="mb-3">
@@ -350,7 +354,7 @@ function Turnos() {
     <section className="Agendados" style={{ minHeight: "100vh", paddingTop: "80px" }}>
       <div className="container contenedor">
         <h4 className="text-center mb-4">Turnos Agendados</h4>
-        
+
         {vistaMovil ? (
           // Vista de tarjetas para móvil
           <div>
@@ -433,9 +437,13 @@ function Turnos() {
                                     value={datosEdicion.hora}
                                     onChange={handleEdicionChange}
                                   >
-                                    <option value="10:00">10:00</option>
-                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
                                     <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
                                   </select>
                                 </div>
                                 <div className="col-md-4">

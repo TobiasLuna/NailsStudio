@@ -44,7 +44,7 @@ function Home() {
     hoy.setHours(0, 0, 0, 0);
     const fechaSeleccionada = new Date(fecha);
     if (fechaSeleccionada < hoy) {
-       Swal.fire({
+      Swal.fire({
         icon: "error",
         title: "Error",
         text: "La fecha seleccionada no puede ser anterior a hoy.",
@@ -65,13 +65,13 @@ function Home() {
         where("hora", "==", hora)
       );
       const querySnapshot = await getDocs(q);
-      
+
       // Si estamos modificando, excluimos el turno actual de la validación
       if (idExcluir) {
         const turnosOcupados = querySnapshot.docs.filter(doc => doc.id !== idExcluir);
         return turnosOcupados.length === 0;
       }
-      
+
       return querySnapshot.empty; // true = disponible, false = ocupado
     } catch (error) {
       console.error("Error al validar el turno:", error);
@@ -168,7 +168,7 @@ function Home() {
 
     try {
       const docRef = doc(db, "turnos", codigo);
-      await updateDoc(docRef, { 
+      await updateDoc(docRef, {
         trabajo: nuevoTrabajo,
         fecha: nuevaFecha,
         hora: nuevaHora
@@ -336,7 +336,7 @@ function Home() {
             <div className="card-header"><img src="/images/semi.jpeg" alt="Curso Semipermanente" /></div>
             <div className="card-body">
               <h5 className="card-title">SEMIPERMANENTE</h5>
-              <p className="card-text">$30.000</p>
+              <p className="card-text">$50.000</p>
             </div>
           </div>
 
@@ -344,7 +344,7 @@ function Home() {
             <div className="card-header"><img src="/images/softgel.jpeg" alt="Curso Softgel" /></div>
             <div className="card-body">
               <h5 className="card-title">SOFTGEL</h5>
-              <p className="card-text">$35.000</p>
+              <p className="card-text">$60.000</p>
             </div>
           </div>
 
@@ -352,7 +352,7 @@ function Home() {
             <div className="card-header"><img src="/images/nailsart.jpeg" alt="Curso Nails Art" /></div>
             <div className="card-body">
               <h5 className="card-title">NAILS ART</h5>
-              <p className="card-text">$45.000</p>
+              <p className="card-text">$65.000</p>
             </div>
           </div>
         </div>
@@ -362,14 +362,12 @@ function Home() {
       <section id="PRECIOS" className="art">
         <div className="container item">
           <h4>PRECIOS</h4>
-          <h5>SOFTGEL LISO..................$</h5>
-          <h5>SOFTGEL + DISEÑO SIMPLE..................$</h5>
-          <h5>SOFTGEL FULL..................$</h5>
-          <h5>SOFTGEL + APLIQUES..................$</h5>
-          <h5>SEMIPERMANENTE..................$</h5>
-          <h5>CAPPING..................$</h5>
-          <h5>PRESS ON..................$</h5>
-          <h5>PRESS ON FULL SET..................$</h5>
+          <h5>SOFTGEL LISO..................$17.000</h5>
+          <h5>SOFTGEL + DISEÑO BASICO..................$17.500</h5>
+          <h5>SOFTGEL + FULL SET..................$20.000</h5>
+          <h5>SEMIPERMANENTE..................$15.000</h5>
+          <h5>KAPPING..................$16.000</h5>
+          <h5>PRESS ON..................$15.000</h5>
         </div>
       </section>
 
@@ -397,12 +395,12 @@ function Home() {
                 className="form-control"
                 id="usuario"
                 name="usuario"
-                placeholder="Usuario"
+                placeholder="Usuario de instagram"
                 value={formData.usuario}
                 onChange={handleChange}
                 required
               />
-              <label htmlFor="usuario">Usuario</label>
+              <label htmlFor="usuario">Usuario de instagram</label>
             </div>
             <div className="form-grup mb-3">
               <input
@@ -423,9 +421,13 @@ function Home() {
               required
             >
               <option value="">Seleccione una hora</option>
-              <option value="10:00">10:00</option>
-              <option value="12:00">12:00</option>
+              <option value="13:00">13:00</option>
               <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>
             </select>
             <select
               className="form-grup form-select form-select-sm mb-3"
@@ -488,7 +490,7 @@ function Home() {
               <p><strong>Fecha actual:</strong> {turnoEncontrado.fecha}</p>
               <p><strong>Hora actual:</strong> {turnoEncontrado.hora}</p>
               <p><strong>Trabajo actual:</strong> {turnoEncontrado.trabajo}</p>
-              
+
               <div className="mb-3">
                 <label className="form-label">Nueva Fecha:</label>
                 <input
@@ -506,9 +508,13 @@ function Home() {
                   value={nuevaHora}
                   onChange={(e) => setNuevaHora(e.target.value)}
                 >
-                  <option value="10:00">10:00</option>
-                  <option value="12:00">12:00</option>
+                  <option value="13:00">13:00</option>
                   <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
                 </select>
               </div>
 
